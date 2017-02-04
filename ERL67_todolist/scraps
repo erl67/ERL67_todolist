@@ -1,0 +1,57 @@
+Things that didnt work or were removed in favor of better methods
+
+
+btnAdd.addActionListener(new ActionListener() {
+@Override
+public void actionPerformed(ActionEvent e) {
+try {
+if (getJtfInput().getText().length() > 0) // prevent null items from being added
+Controller.getAddButton().add();
+} catch (Exception f) {
+}
+}
+});
+
+btnDelete.addActionListener(new ActionListener() {
+@Override
+public void actionPerformed(ActionEvent e) {
+try {	
+Controller.getDeleteButton().delete();
+} catch (Exception f) {
+}
+}
+});
+
+
+Testing Methods:
+
+	public static void add(ListItem item) {
+		Model.addListItem(item);
+	}
+
+	public static void add() {
+		Model.addListItem(new ListItem(View.getJtfInput().getText()));
+	}
+	
+	public static void delete() {
+		Model.deleteListItem(View.getListModel().elementAt(View.getList1().getSelectedIndex()));
+	}
+
+
+//		View frame = new View();
+//		Model model = new Model();
+//		Controller controller = new Controller(frame, model);
+
+		// Failed attempts at trying to get the Button classes to perform actions directly
+Controller.getAddButton().actionPerformed(new ActionEvent(Object[].class, 0, null));
+Controller.getAddButton().actionPerformed(ActionEvent.getActionCommand());
+btnAdd.addActionListener(new ActionListener(Controller.getAddButton()));
+Controller.getDeleteButton().actionPerformed(new ActionEvent(Controller.class, 0, null));
+btnAdd.addActionListener(Controller.getAddButton());
+btnDelete.addActionListener(Controller.getDeleteButton().actionPerformed(e))
+btnDelete.addActionListener(Controller.getDeleteButton().actionPerformed(btnDelete,ActionEvent.ACTION_PERFORMED,
+Controller.getDeleteButton().delete(),0,null));
+
+		
+		//ActionListener deleteListener = new DeleteButton(new Controller(null, null));
+
