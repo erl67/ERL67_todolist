@@ -8,30 +8,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Timestamp;
 
+import javax.swing.JOptionPane;
+
 import edu.pitt.todolist.model.ListItem;
-import edu.pitt.todolist.model.Model;
-import edu.pitt.todolist.view.View;
 
 public class AddButton implements ActionListener {
 
-	private Controller controller;
+	 Controller controller;
 
 	public AddButton(Controller controller) {
 		this.controller = controller;
-	}
-
-	public AddButton() {
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		try {		//prevent blank entries and input errors	
-			if (!View.getJtfInput().getText().equalsIgnoreCase("")) {	
-				ListItem item = new ListItem (View.getJtfInput().getText(), new Timestamp(System.currentTimeMillis()));
-				Model.addListItem(item, View.cboUserSelect());
+			if (!controller.getView().getJtfInput().getText().equalsIgnoreCase("") && !(controller.getView().cboUserSelect()==null)) {	
+				ListItem item = new ListItem (controller.getView().getJtfInput().getText(), new Timestamp(System.currentTimeMillis()));
+				controller.getModel().addListItem(item, controller.getView().cboUserSelect());
 			} else {
-				System.out.println("No item entered");
+				System.out.println("You must enter a task and assign a user.");
+				JOptionPane.showMessageDialog(controller.getView().getCboUser(),
+					    "You must Both enter a task and assign a user.",
+					    "Try Again",
+					    JOptionPane.ERROR_MESSAGE);
 			}	
 		} catch (Exception f) {
 			System.out.println(f.getMessage());
