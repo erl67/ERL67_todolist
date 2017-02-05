@@ -6,6 +6,7 @@ package edu.pitt.todolist;
  */
 import edu.pitt.todolist.controller.Controller;
 import edu.pitt.todolist.model.Model;
+import edu.pitt.todolist.model.UserItem;
 import edu.pitt.todolist.view.View;
 
 public class Main {
@@ -17,6 +18,8 @@ public class Main {
 		Controller controller = new Controller(frame, model);
 		
 		//Model.closeDB();
+		
+
 	}
 
 
