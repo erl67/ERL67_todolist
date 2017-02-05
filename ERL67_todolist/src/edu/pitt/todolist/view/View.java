@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -48,7 +49,7 @@ public class View implements ListSelectionListener, ActionListener {
 	private static DefaultListModel<ListItem> listModel;
 	private static JComboBox<UserItem> cboUser;
 	private static JComboBox<UserItem> cboFilter;
-	private JScrollPane scrollPane;
+	private JScrollPane list1scr;
 	private JPanel panel;
 
 	public View() {
@@ -57,11 +58,20 @@ public class View implements ListSelectionListener, ActionListener {
 		frmMain.setLayout(new FlowLayout());
 		panel = new JPanel();
 		panel.setLayout(new FlowLayout());
-
-		frmMain.getContentPane().setBackground(Color.PINK);
+		JPanel txtPanel = new JPanel();
+		txtPanel.setLayout(new BorderLayout(5,5));
+		JPanel listPanel = new JPanel();
+		listPanel.setLayout(new FlowLayout());
+		listPanel.setBackground(Color.GREEN);
+		listPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+		JPanel btnPanel = new JPanel();
+		btnPanel.setLayout(new FlowLayout());
+		txtPanel.setBackground(Color.DARK_GRAY);
+		btnPanel.setBackground(Color.DARK_GRAY);
+		panel.setBackground(Color.DARK_GRAY);
 
 		frmMain.setContentPane(panel);
-		frmMain.setBounds(350, 150, 500, 650);
+		frmMain.setBounds(350, 150, 500, 575);
 		frmMain.setResizable(false);
 		frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmMain.setAlwaysOnTop(true);
@@ -71,8 +81,6 @@ public class View implements ListSelectionListener, ActionListener {
 		lblToDo.setFont(new Font("Serif", Font.BOLD, 25));
 		lblToDo.setHorizontalAlignment(SwingConstants.CENTER);
 
-		JPanel txtPanel = new JPanel();
-		txtPanel.setLayout(new BorderLayout(5,5));
 		jtfInput = new JTextField(40);
 		jtfInput.setBorder(BorderFactory.createLineBorder(Color.BLACK, 4));
 		jtfInput.setBackground(Color.WHITE);
@@ -83,27 +91,19 @@ public class View implements ListSelectionListener, ActionListener {
 
 		cboUser = new JComboBox<UserItem>();
 		cboUser.setBackground(Color.lightGray);
-		cboUser.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
+		cboUser.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createRaisedBevelBorder(), BorderFactory.createLoweredBevelBorder()));
 		txtPanel.add(cboUser, BorderLayout.PAGE_END);
-
-		JPanel listPanel = new JPanel();
-		listPanel.setLayout(new FlowLayout());
+		
 		listModel = new DefaultListModel<ListItem>();
 		list1 = new JList<ListItem>(listModel);
-
-		list1.setPreferredSize(new Dimension (400,400));
-		list1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
-		list1.addListSelectionListener(this);
 		list1.setBackground(Color.pink);
 		list1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	
-		//scrollPane = new JScrollPane(list1, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		//		frmMain.getContentPane().add(scrollPane);
-		listPanel.add(list1);
-		//listPanel.add(scrollPane);
+		list1.addListSelectionListener(this);
+		list1.setVisibleRowCount(20);
+		//list1.setPreferredSize(new Dimension(300,300));
+		list1scr = new JScrollPane(list1, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		listPanel.add(list1scr);
 
-		JPanel btnPanel = new JPanel();
-		btnPanel.setLayout(new FlowLayout());
 		btnDelete = new JButton("Remove Item");
 		btnAdd = new JButton("Add Item");
 		btnRst = new JButton("Reset");
@@ -119,9 +119,6 @@ public class View implements ListSelectionListener, ActionListener {
 		panel.add(listPanel);
 		panel.add(btnPanel);
 		panel.add(cboFilter);
-		txtPanel.setBackground(Color.DARK_GRAY);
-		btnPanel.setBackground(Color.DARK_GRAY);
-		panel.setBackground(Color.DARK_GRAY);
 		frmMain.setVisible(true);
 
 		ActionListener addListener = new AddButton(null);
