@@ -27,7 +27,7 @@ public class DeleteButton implements ActionListener {
 			controller.getModel().deleteListItem(item);
 		} catch (Exception f) {
 			System.out.println(f.getMessage() + " No item selected");
-			 f.printStackTrace();
+			 //f.printStackTrace();
 		}
 	}
 

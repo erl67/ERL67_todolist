@@ -18,8 +18,8 @@ public class ListItem {
 	 * @param description
 	 * @param id
 	 * @param timestamp
-	 * This constructor will cause errors with the database, because we need to wait for the DB to assign the ID based on the DBengine
-	 * Only use for tasks already in the DB, otherwise use the one below, and setID() based on what row the DB assigns
+	 * This constructor can cause conflicts with the database, because we need to wait for the DB to assign the ID based on the DBengine
+	 * Only used for tasks already in the DB, otherwise use the one below, and setID() based on what row the DB assigns
 	 */
 	public ListItem(String description, int id, Timestamp timestamp) {
 		this.description = description;
@@ -35,10 +35,6 @@ public class ListItem {
 		this.description = description;
 		this.timestamp = timestamp;
 	}
-//	
-//	public ListItem(String description) {
-//		this.description = description;
-//	}
 
 	public void setId(int id) {
 		this.id = id;

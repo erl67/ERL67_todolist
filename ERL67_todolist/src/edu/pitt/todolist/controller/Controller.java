@@ -21,9 +21,9 @@ public class Controller {
 		view.getAddButton().addActionListener(new AddButton(this));
 		view.getDeleteButton().addActionListener(new DeleteButton(this));
 		view.getResetButton().addActionListener(new ResetButton(this));
-		view.getCboFilter().addActionListener(new FilterBoxListener(this));
+		View.getCboFilter().addActionListener(new FilterBoxListener(this));
 	}
-	
+
 	public AddButton getAddButtonListener() {
 		return addButtonListener;
 	}
@@ -31,15 +31,15 @@ public class Controller {
 	public DeleteButton getDeleteButtonListener() {
 		return deleteButtonListener;
 	}
-	
+
 	public ResetButton getResetButtonListener() {
 		return resetButtonListener;
 	}
-	
+
 	public FilterBoxListener getFilterBoxListener() {
 		return filterBoxListener;
 	}
-	
+
 	public View getView() {
 		return view;
 	}

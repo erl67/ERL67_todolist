@@ -1,5 +1,10 @@
 package edu.pitt.todolist.model;
 
+/**
+ * Class UserItem / definesUserItems
+ * @author ERL67
+ * created: 3FEB17
+ */
 public class UserItem {
 	
 	private int id;
@@ -24,9 +29,13 @@ public class UserItem {
 		return lname;
 	}
 	
+	public String lastDotF(){
+		return lname + ", " + fname.substring(0, 1) + ".";
+	}
+	
 	@Override
 	public String toString(){
-		return lname + ", " + fname.substring(0, 1);
+		return lname + ", " + fname + " (" + getId() +")";
 	}
 
 }
