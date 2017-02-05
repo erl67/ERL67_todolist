@@ -35,10 +35,10 @@ public class ListItem {
 		this.description = description;
 		this.timestamp = timestamp;
 	}
-	
-	public ListItem(String description) {
-		this.description = description;
-	}
+//	
+//	public ListItem(String description) {
+//		this.description = description;
+//	}
 
 	public void setId(int id) {
 		this.id = id;

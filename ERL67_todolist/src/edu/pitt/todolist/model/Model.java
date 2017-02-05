@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Enumeration;
 import java.util.HashMap;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -38,7 +37,7 @@ public class Model {
 	}
 
 	public static void pullDbUsers(Connection con) {
-		String query = "SELECT * FROM user ORDER BY user_id ASC";
+		String query = "SELECT user_id, fname, lname FROM erl67is1017.user ORDER BY user_id ASC;";
 		try {
 			Statement statement = con.createStatement();
 			ResultSet rs = statement.executeQuery(query);
@@ -57,7 +56,7 @@ public class Model {
 
 
 	public static void pullDbTasks(Connection con) {
-		String query = "SELECT * FROM todolist JOIN user_todo ON todolist.id = user_todo.fk_todo_id JOIN user ON user_todo.fk_user_id = user.user_id ORDER BY id ASC";
+		String query = "SELECT * FROM todolist JOIN user_todo ON todolist.id = user_todo.fk_todo_id JOIN user ON user_todo.fk_user_id = user.user_id ORDER BY id ASC;";
 		try {
 			Statement statement = con.createStatement();
 			ResultSet rs = statement.executeQuery(query);
@@ -67,8 +66,7 @@ public class Model {
 				ListItem item = new ListItem(rs.getString(2), rs.getInt(1), rs.getTimestamp(3));
 				taskMap.put(item, userMap.get(rs.getInt("fk_user_id")));
 
-				//View.getListModel().addElement(item);
-				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item) + "] "));
+				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item) + "] ", item.getId(), item.getTimestamp()));
 				System.out.println(item.getId() + " " + item.getDescription() + " " + item.getTimestamp() + " " + taskMap.get(item));
 
 				try {	//need to slow down otherwise database will outrun the GUI
@@ -105,8 +103,7 @@ public class Model {
 
 			taskMap.put(item, user);
 
-			//View.getListModel().addElement(item);
-			View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item) + "] "));
+			View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item) + "] ",item.getId(), item.getTimestamp()));
 			View.resetJtfInput();
 			System.out.println("Item Added");
 		}
@@ -120,6 +117,8 @@ public class Model {
 
 	public static void deleteListItem(ListItem item) {
 
+		System.out.println(View.getListModel().elementAt(View.getList1().getSelectedIndex()));
+		System.out.println(View.getListModel().elementAt(View.getList1().getSelectedIndex()).getId());
 		int id = View.getListModel().elementAt(View.getList1().getSelectedIndex()).getId();
 
 		String query = "DELETE FROM erl67is1017.todolist WHERE todolist.id = " + id;
@@ -139,6 +138,7 @@ public class Model {
 
 			taskMap.remove(item);
 			View.getListModel().removeElement(item);
+			System.out.println(taskMap.get(item));
 			System.out.println("Item deleted");
 		}
 		catch (SQLException e) {

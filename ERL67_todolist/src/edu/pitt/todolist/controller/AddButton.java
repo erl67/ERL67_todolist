@@ -29,7 +29,6 @@ public class AddButton implements ActionListener {
 		try {		//prevent blank entries and input errors	
 			if (!View.getJtfInput().getText().equalsIgnoreCase("")) {	
 				ListItem item = new ListItem (View.getJtfInput().getText(), new Timestamp(System.currentTimeMillis()));
-				//Model.addListItem(item, Model.getUserList().get(10));
 				Model.addListItem(item, View.cboUserSelect());
 			} else {
 				System.out.println("No item entered");
