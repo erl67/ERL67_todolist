@@ -24,9 +24,13 @@ public class UserItem {
 		return lname;
 	}
 	
+	public String lastDotF(){
+		return lname + ", " + fname.substring(0, 1) + ".";
+	}
+	
 	@Override
 	public String toString(){
-		return lname + ", " + fname.substring(0, 1);
+		return lname + ", " + fname + " (" + getId() +")";
 	}
 
 }
