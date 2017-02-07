@@ -72,7 +72,7 @@ public class View implements ListSelectionListener {
 		filterPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(1, Color.BLACK, Color.BLACK), BorderFactory.createRaisedBevelBorder()));
 
 		frmMain.setContentPane(panel);
-		frmMain.setBounds(350, 150, 500, 575);
+		frmMain.setBounds(350, 150, 500, 600);
 		frmMain.setResizable(false);
 		frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmMain.setAlwaysOnTop(true);
@@ -118,7 +118,9 @@ public class View implements ListSelectionListener {
 		list1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list1.addListSelectionListener(this);
 		list1.setVisibleRowCount(20);
+		//list1.setPreferredSize(new Dimension(400,400));
 		list1scr = new JScrollPane(list1, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		list1scr.setPreferredSize(new Dimension(350,330));
 		listPanel.add(list1scr);
 
 		btnDelete = new JButton("Remove Item");
