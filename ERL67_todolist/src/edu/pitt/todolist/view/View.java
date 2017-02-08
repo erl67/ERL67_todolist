@@ -99,15 +99,14 @@ public class View implements ListSelectionListener {
 		jtfInput.setBackground(Color.WHITE);
 		jtfInput.setPreferredSize(new Dimension(400,30));
 
-		txtPanel.add(lblToDo, BorderLayout.PAGE_START);
-		txtPanel.add(lblTask, BorderLayout.WEST);
-		txtPanel.add(jtfInput, BorderLayout.CENTER);
-
 		cboUser = new JComboBox<UserItem>();
 		cboUser.setBackground(Color.lightGray);
 		cboUser.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createRaisedBevelBorder(), BorderFactory.createLoweredBevelBorder()));
 		cboUser.insertItemAt(null, 0);
 
+		txtPanel.add(lblToDo, BorderLayout.PAGE_START);
+		txtPanel.add(lblTask, BorderLayout.WEST);
+		txtPanel.add(jtfInput, BorderLayout.CENTER);
 		usrPanel.add(lblUser, BorderLayout.WEST);
 		usrPanel.add(cboUser, BorderLayout.CENTER);
 		txtPanel.add(usrPanel, BorderLayout.PAGE_END);	
@@ -118,7 +117,6 @@ public class View implements ListSelectionListener {
 		list1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list1.addListSelectionListener(this);
 		list1.setVisibleRowCount(20);
-		//list1.setPreferredSize(new Dimension(400,400));
 		list1scr = new JScrollPane(list1, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		list1scr.setPreferredSize(new Dimension(350,330));
 		listPanel.add(list1scr);
@@ -129,14 +127,15 @@ public class View implements ListSelectionListener {
 		btnAdd.setPreferredSize(new Dimension(120, 40));
 		btnDelete.setPreferredSize(new Dimension(120, 40));
 		btnRst.setPreferredSize(new Dimension(120, 40));
+		
 		btnPanel.add(btnAdd); btnPanel.add(btnDelete); btnPanel.add(btnRst);
+		listPanel.add(btnPanel);
 
 		cboFilter.insertItemAt(null, 0);
 		filterPanel.add(lblFilter, BorderLayout.WEST);
 		filterPanel.add(cboFilter, BorderLayout.CENTER);
 
 		panel.add(txtPanel, BorderLayout.PAGE_START);
-		listPanel.add(btnPanel);
 		panel.add(listPanel, BorderLayout.CENTER);
 		panel.add(filterPanel, BorderLayout.PAGE_END);
 		frmMain.setVisible(true);
