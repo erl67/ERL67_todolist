@@ -40,11 +40,7 @@ public class Model {
 		}
 	}
 
-<<<<<<< HEAD
 	public static void pullDbUsers(Connection con) {
-=======
-	public void pullDbUsers(Connection con) {
->>>>>>> refs/remotes/origin/master
 
 		String query = "SELECT * FROM erl67is1017.user ORDER BY lname ASC;";
 
@@ -67,7 +63,6 @@ public class Model {
 	} 
 
 	public static void pullDbTasks(Connection con) {
-<<<<<<< HEAD
 		String query = "SELECT * FROM todolist JOIN user_todo ON todolist.id = user_todo.fk_todo_id";
 		String sort = " ORDER BY todolist.id;";
 		//String sort = " ORDER BY user.lname, todolist.id;";	//in the future can add sorting function
@@ -76,29 +71,15 @@ public class Model {
 			PreparedStatement stmt = con.prepareStatement(query+sort);
 			ResultSet rs = stmt.executeQuery();
 			System.out.println(stmt.toString());
-=======
-		String query = "SELECT * FROM todolist JOIN user_todo ON todolist.id = user_todo.fk_todo_id JOIN user ON user_todo.fk_user_id = user.user_id ORDER BY user.lname, todolist.id;";
->>>>>>> refs/remotes/origin/master
 
-		try {
-			PreparedStatement stmt = con.prepareStatement(query);
-			ResultSet rs = stmt.executeQuery();
-			System.out.println(stmt.toString());
-			
 			while (rs.next()) {
 
 				ListItem item = new ListItem(rs.getString(2), rs.getInt(1), rs.getTimestamp(3));
 				taskMap.put(item, userMap.get(rs.getInt("fk_user_id")));
-<<<<<<< HEAD
 				
 				//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
 				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ", item.getId(), item.getTimestamp()));
 				System.out.println(item.getId() + " " + item.getDescription() + " " + item.getTimestamp() + " " + taskMap.get(item));	//print task details and value from taskmap(user)
-=======
-
-				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ", item.getId(), item.getTimestamp()));
-				System.out.println(item.getId() + " " + item.getDescription() + " " + item.getTimestamp() + " " + taskMap.get(item));
->>>>>>> refs/remotes/origin/master
 
 				try {	//need to slow down otherwise database will outrun the GUI
 					Thread.sleep(50);
@@ -110,22 +91,14 @@ public class Model {
 		} 
 	} 
 
-<<<<<<< HEAD
 	public static void addListItem(ListItem item, UserItem user) {
-=======
-	public void addListItem(ListItem item, UserItem user) {
->>>>>>> refs/remotes/origin/master
 		try {
 			//Enter task into todolist table
 			PreparedStatement stmt = con.prepareStatement("INSERT INTO erl67is1017.todolist (description) VALUES (?)");
 			stmt.setString(1, item.getDescription());  
 			stmt.executeUpdate();
 
-<<<<<<< HEAD
 			//Assign taskID to class manually because we need to wait for the database to assign an ID, otherwise FK conflicts and auto-increment errors will snowball  
-=======
-			//Assign taskID to class because we need to wait for the database to assign an ID, otherwise FK conflicts and auto-increment errors will snowball  
->>>>>>> refs/remotes/origin/master
 			int id = getmaxID();
 			item.setId(id);
 
@@ -139,12 +112,9 @@ public class Model {
 			stmt.close(); stmt2.close();
 
 			taskMap.put(item, user);
-<<<<<<< HEAD
 			
 			//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
 			//this also creates an inability to directly compare things from the list to the hashmap, so the ID should be the main way to verify the task
-=======
->>>>>>> refs/remotes/origin/master
 			View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));
 			View.getJtfInput().setText("");
 			System.out.println("Item Added");
@@ -161,13 +131,8 @@ public class Model {
 		}
 	}
 
-<<<<<<< HEAD
 	public static void deleteListItem(ListItem item) {
-=======
-	public void deleteListItem(ListItem item) {
->>>>>>> refs/remotes/origin/master
 		int id = View.getListModel().elementAt(View.getList1().getSelectedIndex()).getId();
-<<<<<<< HEAD
 		//need to cycle through the hashmap, because no way to tell which key has the same ID as the ListModel item
 		for (ListItem mapitem: taskMap.keySet()){
 			if (mapitem.getId() == item.getId()) {
@@ -188,27 +153,6 @@ public class Model {
 					System.out.println("Item not available");  e.printStackTrace();
 				}
 				break;	//must break the for loop once something is removed or it will give an index error
-=======
-		for (ListItem mapitem: taskMap.keySet()){
-			if (mapitem.getId() == item.getId()) {
-				taskMap.remove(mapitem);
-				View.getListModel().removeElement(item);
-				System.out.println("Item deleted");
-				try {
-					PreparedStatement stmt = con.prepareStatement("DELETE FROM erl67is1017.user_todo WHERE fk_todo_id=?");
-					PreparedStatement stmt2 = con.prepareStatement("DELETE FROM erl67is1017.todolist WHERE todolist.id=?");
-					stmt.setInt(1, id);   
-					stmt2.setInt(1, id);
-					System.out.println(stmt.toString().substring(47) + "   " + stmt2.toString().substring(47));		//substring to hide JDBC class junk
-					stmt.executeUpdate();
-					stmt2.executeUpdate();
-					stmt.close(); stmt2.close();
-				}
-				catch (SQLException e) {
-					System.out.println("Item not available");  e.printStackTrace();
-				}
-				break;
->>>>>>> refs/remotes/origin/master
 			}		
 		}	
 	}
@@ -242,19 +186,11 @@ public class Model {
 
 	public static void filterUsers(UserItem user) {
 		View.getListModel().clear();
-<<<<<<< HEAD
 		if (user==null) {	//if the blank is selected it will repopulate everyone
 			for (ListItem item: taskMap.keySet()){
 				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));			
 			}
 		} else {	//cycle through the hashmap and only add the items where the value is equal to selected user
-=======
-		if (user==null) {
-			for (ListItem item: taskMap.keySet()){
-				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));			
-			}
-		} else {
->>>>>>> refs/remotes/origin/master
 			for (ListItem item: taskMap.keySet()){
 				if (taskMap.get(item) == user) {
 					View.getListModel().addElement(item);
@@ -263,14 +199,10 @@ public class Model {
 		}
 	}
 
-<<<<<<< HEAD
 	/**
 	 * Clear the hashmap and recheck the database, provides a way to undo filtering view and check for bugs
 	 */
 	public static void reset() {
-=======
-	public void reset() {
->>>>>>> refs/remotes/origin/master
 		taskMap.clear();
 		pullDbTasks (con);	
 	}

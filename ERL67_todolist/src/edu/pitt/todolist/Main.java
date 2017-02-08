@@ -10,18 +10,10 @@ import edu.pitt.todolist.view.View;
 
 public class Main {
 	public static void main(String[] args) {
-<<<<<<< HEAD
 		View frame = new View();
 		Model model = new Model();
 		@SuppressWarnings("unused")
 		Controller controller = new Controller(frame, model);	
-=======
-
-		//View frame = new View();
-		//Model model = new Model();
-		Controller controller = new Controller(new View(), new Model());
-		
->>>>>>> refs/remotes/origin/master
 		//Model.closeDB();
 	}
 }
