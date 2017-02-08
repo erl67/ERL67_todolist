@@ -20,14 +20,6 @@ public class UserItem {
 	public int getId() {
 		return id;
 	}
-
-	public String getFname() {
-		return fname;
-	}
-
-	public String getLname() {
-		return lname;
-	}
 	
 	public String lastDotF(){
 		return lname + ", " + fname.substring(0, 1) + ".";

@@ -157,14 +157,6 @@ public class Model {
 		}	
 	}
 
-	public static HashMap<ListItem, UserItem> getTaskList() {
-		return taskMap;
-	}
-
-	public static HashMap<Integer, UserItem> getUserList() {
-		return userMap;
-	}
-
 	/**
 	 * @return int of the last entered task row
 	 * this was required because the database rejects previous numbers even if they were deleted
@@ -184,6 +176,10 @@ public class Model {
 		return i;	
 	}
 
+	/**
+	 * @param user
+	 * Show tasks assigned to a single user
+	 */
 	public static void filterUsers(UserItem user) {
 		View.getListModel().clear();
 		if (user==null) {	//if the blank is selected it will repopulate everyone
@@ -206,7 +202,18 @@ public class Model {
 		taskMap.clear();
 		pullDbTasks (con);	
 	}
+	
+	public static HashMap<ListItem, UserItem> getTaskList() {
+		return taskMap;
+	}
 
+	public static HashMap<Integer, UserItem> getUserList() {
+		return userMap;
+	}
+
+	/**
+	 * Not used
+	 */
 	public static void closeDB(){
 		try {
 			con.close();

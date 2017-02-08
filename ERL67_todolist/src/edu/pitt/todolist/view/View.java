@@ -121,8 +121,8 @@ public class View implements ListSelectionListener {
 		list1scr.setPreferredSize(new Dimension(350,330));
 		listPanel.add(list1scr);
 
-		btnDelete = new JButton("Remove Item");
-		btnAdd = new JButton("Add Item");
+		btnDelete = new JButton("Remove Task");
+		btnAdd = new JButton("Add Task");
 		btnRst = new JButton("Reset View");
 		btnAdd.setPreferredSize(new Dimension(120, 40));
 		btnDelete.setPreferredSize(new Dimension(120, 40));
@@ -168,14 +168,15 @@ public class View implements ListSelectionListener {
 	public static JTextField getJtfInput() {
 		return jtfInput;
 	}
-
+	
 	public JButton getDeleteButton() {
 		return btnDelete;
 	}
-
+	
 	public JButton getResetButton() {
 		return btnRst;
 	}
+	
 	public JButton getAddButton() {
 		return btnAdd;
 	}
