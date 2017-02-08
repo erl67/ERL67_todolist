@@ -1,4 +1,9 @@
 package edu.pitt.todolist.model;
+/**
+ * Class Main / tests view models
+ * @author ERL67
+ * created: 4FEB17
+ */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -58,10 +63,10 @@ public class Model {
 	} 
 
 	public static void pullDbTasks(Connection con) {
-		String query = "SELECT * FROM todolist JOIN user_todo ON todolist.id = user_todo.fk_todo_id JOIN user ON user_todo.fk_user_id = user.user_id";
-		//String sort = " ORDER BY user.lname, todolist.id;";	//in the future may add sorting function
+		String query = "SELECT * FROM todolist JOIN user_todo ON todolist.id = user_todo.fk_todo_id";
 		String sort = " ORDER BY todolist.id;";
-
+		//String sort = " ORDER BY user.lname, todolist.id;";	//in the future can add sorting function
+		
 		try {
 			PreparedStatement stmt = con.prepareStatement(query+sort);
 			ResultSet rs = stmt.executeQuery();
@@ -71,9 +76,10 @@ public class Model {
 
 				ListItem item = new ListItem(rs.getString(2), rs.getInt(1), rs.getTimestamp(3));
 				taskMap.put(item, userMap.get(rs.getInt("fk_user_id")));
-
+				
+				//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
 				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ", item.getId(), item.getTimestamp()));
-				System.out.println(item.getId() + " " + item.getDescription() + " " + item.getTimestamp() + " " + taskMap.get(item));
+				System.out.println(item.getId() + " " + item.getDescription() + " " + item.getTimestamp() + " " + taskMap.get(item));	//print task details and value from taskmap(user)
 
 				try {	//need to slow down otherwise database will outrun the GUI
 					Thread.sleep(50);
@@ -87,25 +93,28 @@ public class Model {
 
 	public static void addListItem(ListItem item, UserItem user) {
 		try {
-			//Enter task into Database
+			//Enter task into todolist table
 			PreparedStatement stmt = con.prepareStatement("INSERT INTO erl67is1017.todolist (description) VALUES (?)");
 			stmt.setString(1, item.getDescription());  
 			stmt.executeUpdate();
 
-			//Assign taskID to class because we need to wait for the database to assign an ID, otherwise FK conflicts and auto-increment errors will snowball  
+			//Assign taskID to class manually because we need to wait for the database to assign an ID, otherwise FK conflicts and auto-increment errors will snowball  
 			int id = getmaxID();
 			item.setId(id);
 
-			//Assign user to task and store in DB
+			//Assign user to task and store in junction table with newly gotten task ID
 			PreparedStatement stmt2 = con.prepareStatement("INSERT INTO erl67is1017.user_todo (fk_todo_id, fk_user_id) VALUES (?,?)");
 			stmt2.setInt(1, id); 
 			stmt2.setInt(2, user.getId());
 			stmt2.executeUpdate();
 
-			System.out.println(stmt.toString().substring(47) + "   " + stmt2.toString().substring(47));
+			System.out.println(stmt.toString().substring(47) + "   " + stmt2.toString().substring(47));	//substringed to hide extra JDBC data
 			stmt.close(); stmt2.close();
 
 			taskMap.put(item, user);
+			
+			//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
+			//this also creates an inability to directly compare things from the list to the hashmap, so the ID should be the main way to verify the task
 			View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));
 			View.getJtfInput().setText("");
 			System.out.println("Item Added");
@@ -124,6 +133,7 @@ public class Model {
 
 	public static void deleteListItem(ListItem item) {
 		int id = View.getListModel().elementAt(View.getList1().getSelectedIndex()).getId();
+		//need to cycle through the hashmap, because no way to tell which key has the same ID as the ListModel item
 		for (ListItem mapitem: taskMap.keySet()){
 			if (mapitem.getId() == item.getId()) {
 				taskMap.remove(mapitem);
@@ -142,7 +152,7 @@ public class Model {
 				catch (SQLException e) {
 					System.out.println("Item not available");  e.printStackTrace();
 				}
-				break;
+				break;	//must break the for loop once something is removed or it will give an index error
 			}		
 		}	
 	}
@@ -156,9 +166,9 @@ public class Model {
 	}
 
 	/**
-	 * @return int of the max database task rows
-	 * this was required because the database rejects any previous numbers even if they were deleted
-	 * therefore it is impossible to assign a task ID until the database provides it
+	 * @return int of the last entered task row
+	 * this was required because the database rejects previous numbers even if they were deleted
+	 * therefore it is impossible to assign a task ID unless the database assigns it (may have been simpler to turn off auto-increment and leave unique)
 	 */
 	public static int getmaxID() {
 		int i = 0;
@@ -176,11 +186,11 @@ public class Model {
 
 	public static void filterUsers(UserItem user) {
 		View.getListModel().clear();
-		if (user==null) {
+		if (user==null) {	//if the blank is selected it will repopulate everyone
 			for (ListItem item: taskMap.keySet()){
 				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));			
 			}
-		} else {
+		} else {	//cycle through the hashmap and only add the items where the value is equal to selected user
 			for (ListItem item: taskMap.keySet()){
 				if (taskMap.get(item) == user) {
 					View.getListModel().addElement(item);
@@ -189,6 +199,9 @@ public class Model {
 		}
 	}
 
+	/**
+	 * Clear the hashmap and recheck the database, provides a way to undo filtering view and check for bugs
+	 */
 	public static void reset() {
 		taskMap.clear();
 		pullDbTasks (con);	
