@@ -27,7 +27,8 @@ public class DeleteButton implements ActionListener {
 		try { 
 			int idx = controller.getView().getList1().getSelectedIndex();
 			ListItem item = controller.getView().getListModel().elementAt(idx);
-			if (item.isLeaf()) {
+			System.out.println(item.getChildren().size() + " leaf=" +item.isLeaf());
+			if (item.isLeaf() == true) {
 				System.out.println("Deleting leaf " + item.getId());
 				controller.getModel().deleteListItem(item);
 			} else {
@@ -35,19 +36,18 @@ public class DeleteButton implements ActionListener {
 						"Cannot delete parent tasks without completing or removing subtasks",
 						"Error",
 						JOptionPane.ERROR_MESSAGE);
-				for (ListItem childs : item.getChildren()) {
-					System.out.println("Deleting child: " + childs.getDescription());
-					controller.getModel().deleteListItem(childs);
-				}
-				controller.getModel().deleteListItem(item);
+				//below code is if for deleting subtasks automatically
+//				for (ListItem childs : item.getChildren()) {
+//					System.out.println("Deleting child: " + childs.getDescription());
+//					controller.getModel().deleteListItem(childs);
+//				}
+//				controller.getModel().deleteListItem(item);
 			}
 		} catch (NullPointerException e1) {
-			//System.out.println(e1.getMessage());
-			//e1.printStackTrace();
+			//System.out.println(e1.getMessage()); //e1.printStackTrace();
 		}
 		catch (Exception f) {
-			System.out.println(f.getMessage() + " No item selected");
-			//f.printStackTrace();
+			System.out.println(f.getMessage() + " No item selected"); //f.printStackTrace();
 		}
 	}
 

@@ -83,7 +83,7 @@ public class Model {
 				if (rs.getInt(4) != 0) {	//if task has a parent in the DB
 					for (ListItem mapitem: taskMap.keySet()){
 						if (mapitem.getId() == rs.getInt(4)) {
-							item.setDescription(".....\t" + item.getDescription());
+							item.setDescription("     " + item.getDescription() + " [subtask of: " + mapitem.getDescription().trim() +"]");
 							item.setParent(mapitem);
 							mapitem.addChild(item);
 							int idx = View.getListModel().indexOf(mapitem);
@@ -95,6 +95,9 @@ public class Model {
 				} else {
 					//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
 					//View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ", item.getId(), item.getTimestamp()));
+					
+					//uncomment below to show user
+					//item.setDescription(item.getDescription() + " [" +  userMap.get(rs.getInt("fk_user_id")).lastDotF() + "]");
 					View.getListModel().addElement(item);
 					System.out.println(item.getId() + " " + item.getDescription() + " " + item.getTimestamp() + " " + taskMap.get(item) + item.getChildren());	//print task details and value from taskmap(user)	
 				}
@@ -112,7 +115,7 @@ public class Model {
 
 	public void addListItem(ListItem item, UserItem user, int parentid) {
 
-		if (parentid > 0) {
+		if (parentid > 0) {	//if task will have a parent
 			try {
 				//Enter task into todolist table
 				PreparedStatement stmt = con.prepareStatement("INSERT INTO erl67is1017.todolist (description, fk_id) VALUES (?, ?)");
@@ -135,7 +138,7 @@ public class Model {
 				
 				for (ListItem mapitem: taskMap.keySet()){
 					if (mapitem.getId() == parentid) {
-						item.setDescription(".....\t" + item.getDescription());
+						item.setDescription("     " + item.getDescription() + " [subtask of: " + mapitem.getDescription().trim() +"]");
 						item.setParent(mapitem);
 						mapitem.addChild(item);
 						int idx = View.getListModel().indexOf(mapitem);
@@ -162,7 +165,7 @@ public class Model {
 			catch (SQLException e) {
 				System.out.println("SQL error"); e.printStackTrace();
 			}
-		} else {
+		} else {	//if task has no parent
 			try {
 				//Enter task into todolist table
 				PreparedStatement stmt = con.prepareStatement("INSERT INTO erl67is1017.todolist (description) VALUES (?)");
@@ -262,9 +265,10 @@ public class Model {
 	public static void filterUsers(UserItem user) {
 		View.getListModel().clear();
 		if (user==null) {	//if the blank is selected it will repopulate everyone
-			for (ListItem item: taskMap.keySet()){
-				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));			
-			}
+			reset();
+//			for (ListItem item: taskMap.keySet()){
+//				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));			
+//			}
 		} else {	//cycle through the hashmap and only add the items where the value is equal to selected user
 			for (ListItem item: taskMap.keySet()){
 				if (taskMap.get(item) == user) {
