@@ -83,4 +83,15 @@ SELECT max(id) FROM erl67is1017.todolist;
 
 
 
+# Changes for trees
 
+alter table todolist ADD (fk_id int);
+ALTER table todolist ADD FOREIGN KEY (fk_id) REFERENCES todolist(id);
+
+INSERT INTO todolist(description, timestamp, fk_id) VALUES ('TreeTest1', CURRENT_TIMESTAMP(), 211);
+INSERT INTO todolist(description, timestamp, fk_id) VALUES ('Drink', CURRENT_TIMESTAMP(), 1);
+INSERT INTO todolist(description, timestamp, fk_id) VALUES ('Wake up', CURRENT_TIMESTAMP(), 5);
+
+INSERT INTO user_todo (fk_todo_id, fk_user_id) VALUES (212, 4);
+INSERT INTO user_todo (fk_todo_id, fk_user_id) VALUES (213, 9);
+INSERT INTO user_todo (fk_todo_id, fk_user_id) VALUES (214, 8);

@@ -11,10 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
+import edu.pitt.todolist.controller.Controller;
 import edu.pitt.todolist.view.View;
 
 
@@ -28,6 +30,8 @@ public class Model {
 	private final String DB_DRIVER = "com.mysql.jdbc.Driver";
 	private final String DB_USERNAME = "erl67is1017";
 	private final String DB_PASSWORD = "erl67@pitt.edu";
+	
+	private static Controller controller;
 
 	public Model() {
 		try {

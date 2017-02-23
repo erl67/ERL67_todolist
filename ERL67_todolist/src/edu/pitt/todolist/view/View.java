@@ -149,11 +149,11 @@ public class View implements ListSelectionListener {
 		return cboFilter;
 	}
 
-	public static UserItem cboUserSelect() {
+	public UserItem cboUserSelect() {
 		return (UserItem) cboUser.getSelectedItem();
 	}
 
-	public static UserItem cboFilterSelect() {
+	public UserItem cboFilterSelect() {
 		return (UserItem) cboFilter.getSelectedItem();
 	}
 

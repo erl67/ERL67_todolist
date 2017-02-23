@@ -21,7 +21,7 @@ public class Controller {
 		view.getAddButton().addActionListener(new AddButton(this));
 		view.getDeleteButton().addActionListener(new DeleteButton(this));
 		view.getResetButton().addActionListener(new ResetButton(this));
-		View.getCboFilter().addActionListener(new FilterBoxListener(this));
+		view.getCboFilter().addActionListener(new FilterBoxListener(this));
 	}
 
 	public AddButton getAddButtonListener() {
