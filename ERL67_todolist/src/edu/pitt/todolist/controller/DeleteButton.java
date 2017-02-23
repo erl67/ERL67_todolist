@@ -7,7 +7,10 @@ package edu.pitt.todolist.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JOptionPane;
+
 import edu.pitt.todolist.model.ListItem;
+import edu.pitt.todolist.view.View;
 
 public class DeleteButton implements ActionListener {
 
@@ -24,10 +27,27 @@ public class DeleteButton implements ActionListener {
 		try { 
 			int idx = controller.getView().getList1().getSelectedIndex();
 			ListItem item = controller.getView().getListModel().elementAt(idx);
-			controller.getModel().deleteListItem(item);
-		} catch (Exception f) {
+			if (item.isLeaf()) {
+				System.out.println("Deleting leaf " + item.getId());
+				controller.getModel().deleteListItem(item);
+			} else {
+				JOptionPane.showMessageDialog(View.getList1(),
+						"Cannot delete parent tasks without completing or removing subtasks",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+				for (ListItem childs : item.getChildren()) {
+					System.out.println("Deleting child: " + childs.getDescription());
+					controller.getModel().deleteListItem(childs);
+				}
+				controller.getModel().deleteListItem(item);
+			}
+		} catch (NullPointerException e1) {
+			//System.out.println(e1.getMessage());
+			//e1.printStackTrace();
+		}
+		catch (Exception f) {
 			System.out.println(f.getMessage() + " No item selected");
-			 //f.printStackTrace();
+			//f.printStackTrace();
 		}
 	}
 

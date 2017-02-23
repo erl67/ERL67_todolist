@@ -85,6 +85,7 @@ public class Model {
 						if (mapitem.getId() == rs.getInt(4)) {
 							item.setDescription(".....\t" + item.getDescription());
 							item.setParent(mapitem);
+							mapitem.addChild(item);
 							int idx = View.getListModel().indexOf(mapitem);
 							View.getListModel().insertElementAt(item, idx+1);
 							//View.getListModel().addElement(new ListItem(">>>>" + item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ", item.getId(), item.getTimestamp()));
@@ -111,7 +112,6 @@ public class Model {
 
 	public void addListItem(ListItem item, UserItem user, int parentid) {
 
-		
 		if (parentid > 0) {
 			try {
 				//Enter task into todolist table
@@ -137,6 +137,7 @@ public class Model {
 					if (mapitem.getId() == parentid) {
 						item.setDescription(".....\t" + item.getDescription());
 						item.setParent(mapitem);
+						mapitem.addChild(item);
 						int idx = View.getListModel().indexOf(mapitem);
 						View.getListModel().insertElementAt(item, idx+1);
 						System.out.println(item + " parent= " + mapitem);
@@ -206,9 +207,6 @@ public class Model {
 		//need to cycle through the hashmap, because no way to tell which key has the same ID as the ListModel item
 		for (ListItem mapitem: taskMap.keySet()){
 			if (mapitem.getId() == item.getId()) {
-				taskMap.remove(mapitem);
-				View.getListModel().removeElement(item);
-				System.out.println("Item deleted");
 				try {
 					PreparedStatement stmt = con.prepareStatement("DELETE FROM erl67is1017.user_todo WHERE fk_todo_id=?");
 					PreparedStatement stmt2 = con.prepareStatement("DELETE FROM erl67is1017.todolist WHERE todolist.id=?");
@@ -218,6 +216,17 @@ public class Model {
 					stmt.executeUpdate();
 					stmt2.executeUpdate();
 					stmt.close(); stmt2.close();
+					taskMap.remove(mapitem);
+					View.getListModel().removeElement(item);
+					item.getParent().removeChild(item);
+					//System.out.println("Item deleted");
+				}
+				catch (MySQLIntegrityConstraintViolationException f) {
+					JOptionPane.showMessageDialog(View.getList1(),
+							"Cannot delete parent tasks without completing or removing subtasks",
+							"Error",
+							JOptionPane.ERROR_MESSAGE);
+							//f.printStackTrace();
 				}
 				catch (SQLException e) {
 					System.out.println("Item not available");  e.printStackTrace();

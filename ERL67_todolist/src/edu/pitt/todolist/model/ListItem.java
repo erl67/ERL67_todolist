@@ -89,6 +89,11 @@ public class ListItem {
 		child.setParent(this);
 	}
 	
+	public void removeChild(ListItem child) {
+		children.remove(child);
+		child.setParent(this);
+	}
+	
 	public Vector<ListItem> getChildren() {
 		return children;
 	}
