@@ -120,6 +120,8 @@ public class View implements ListSelectionListener {
 		list1scr = new JScrollPane(list1, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		list1scr.setPreferredSize(new Dimension(350,330));
 		listPanel.add(list1scr);
+		
+		
 
 		btnDelete = new JButton("Remove Task");
 		btnAdd = new JButton("Add Task");

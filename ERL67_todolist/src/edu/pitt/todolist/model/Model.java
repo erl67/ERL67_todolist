@@ -56,7 +56,7 @@ public class Model {
 			while (rs.next()) {
 				UserItem user = new UserItem(rs.getInt(1), rs.getString(2), rs.getString(3));
 				userMap.put(user.getId(), user);
-				System.out.println("DB:"+rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " // Map: " + user.getId()+", " + userMap.get(user.getId()));
+				//System.out.println("DB:"+rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " // Map: " + user.getId()+", " + userMap.get(user.getId()));
 				View.getCboUser().addItem(user);
 				View.getCboFilter().addItem(user);
 			}
@@ -79,12 +79,26 @@ public class Model {
 			while (rs.next()) {
 
 				ListItem item = new ListItem(rs.getString(2), rs.getInt(1), rs.getTimestamp(3));
+				
+				if (rs.getInt(4) != 0) {	//if task has a parent in the DB
+					for (ListItem mapitem: taskMap.keySet()){
+						if (mapitem.getId() == rs.getInt(4)) {
+							item.setDescription(".....\t" + item.getDescription());
+							item.setParent(mapitem);
+							int idx = View.getListModel().indexOf(mapitem);
+							View.getListModel().insertElementAt(item, idx+1);
+							//View.getListModel().addElement(new ListItem(">>>>" + item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ", item.getId(), item.getTimestamp()));
+							System.out.println(item + " parent= " + mapitem);
+						}		
+					}	
+				} else {
+					//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
+					//View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ", item.getId(), item.getTimestamp()));
+					View.getListModel().addElement(item);
+					System.out.println(item.getId() + " " + item.getDescription() + " " + item.getTimestamp() + " " + taskMap.get(item) + item.getChildren());	//print task details and value from taskmap(user)	
+				}
 				taskMap.put(item, userMap.get(rs.getInt("fk_user_id")));
 				
-				//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
-				View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ", item.getId(), item.getTimestamp()));
-				System.out.println(item.getId() + " " + item.getDescription() + " " + item.getTimestamp() + " " + taskMap.get(item));	//print task details and value from taskmap(user)
-
 				try {	//need to slow down otherwise database will outrun the GUI
 					Thread.sleep(50);
 				} catch (InterruptedException e) {}
@@ -95,43 +109,95 @@ public class Model {
 		} 
 	} 
 
-	public static void addListItem(ListItem item, UserItem user) {
-		try {
-			//Enter task into todolist table
-			PreparedStatement stmt = con.prepareStatement("INSERT INTO erl67is1017.todolist (description) VALUES (?)");
-			stmt.setString(1, item.getDescription());  
-			stmt.executeUpdate();
+	public void addListItem(ListItem item, UserItem user, int parentid) {
 
-			//Assign taskID to class manually because we need to wait for the database to assign an ID, otherwise FK conflicts and auto-increment errors will snowball  
-			int id = getmaxID();
-			item.setId(id);
+		
+		if (parentid > 0) {
+			try {
+				//Enter task into todolist table
+				PreparedStatement stmt = con.prepareStatement("INSERT INTO erl67is1017.todolist (description, fk_id) VALUES (?, ?)");
+				stmt.setString(1, item.getDescription());
+				stmt.setInt(2, parentid);
+				stmt.executeUpdate();
 
-			//Assign user to task and store in junction table with newly gotten task ID
-			PreparedStatement stmt2 = con.prepareStatement("INSERT INTO erl67is1017.user_todo (fk_todo_id, fk_user_id) VALUES (?,?)");
-			stmt2.setInt(1, id); 
-			stmt2.setInt(2, user.getId());
-			stmt2.executeUpdate();
+				//Assign taskID to class manually because we need to wait for the database to assign an ID, otherwise FK conflicts and auto-increment errors will snowball  
+				int id = getmaxID();
+				item.setId(id);
 
-			System.out.println(stmt.toString().substring(47) + "   " + stmt2.toString().substring(47));	//substringed to hide extra JDBC data
-			stmt.close(); stmt2.close();
+				//Assign user to task and store in junction table with newly gotten task ID
+				PreparedStatement stmt2 = con.prepareStatement("INSERT INTO erl67is1017.user_todo (fk_todo_id, fk_user_id) VALUES (?,?)");
+				stmt2.setInt(1, id); 
+				stmt2.setInt(2, user.getId());
+				stmt2.executeUpdate();
 
-			taskMap.put(item, user);
-			
-			//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
-			//this also creates an inability to directly compare things from the list to the hashmap, so the ID should be the main way to verify the task
-			View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));
-			View.getJtfInput().setText("");
-			System.out.println("Item Added");
-		}
-		catch (MySQLIntegrityConstraintViolationException f) {
-			System.out.println("Duplicate item, unable to add"); //f.printStackTrace();
-			JOptionPane.showMessageDialog(View.getCboUser(),
-					"This task is already in the list",
-					"Try Again",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		catch (SQLException e) {
-			System.out.println("SQL error"); e.printStackTrace();
+				System.out.println(stmt.toString().substring(47) + "   " + stmt2.toString().substring(47));	//substringed to hide extra JDBC data
+				stmt.close(); stmt2.close();
+				
+				for (ListItem mapitem: taskMap.keySet()){
+					if (mapitem.getId() == parentid) {
+						item.setDescription(".....\t" + item.getDescription());
+						item.setParent(mapitem);
+						int idx = View.getListModel().indexOf(mapitem);
+						View.getListModel().insertElementAt(item, idx+1);
+						System.out.println(item + " parent= " + mapitem);
+					}		
+				}	
+
+				taskMap.put(item, user);
+
+				//because I wanted the listmodel to also show the user, the listitem displayed is slightly different than the one in the map, it is constructed as below
+				//this also creates an inability to directly compare things from the list to the hashmap, so the ID should be the main way to verify the task
+				//View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));
+				View.getJtfInput().setText("");
+				System.out.println("Item Added");
+			}
+			catch (MySQLIntegrityConstraintViolationException f) {
+				System.out.println("Duplicate item, unable to add"); //f.printStackTrace();
+				JOptionPane.showMessageDialog(View.getCboUser(),
+						"This task is already in the list",
+						"Try Again",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			catch (SQLException e) {
+				System.out.println("SQL error"); e.printStackTrace();
+			}
+		} else {
+			try {
+				//Enter task into todolist table
+				PreparedStatement stmt = con.prepareStatement("INSERT INTO erl67is1017.todolist (description) VALUES (?)");
+				stmt.setString(1, item.getDescription());
+				stmt.executeUpdate();
+
+				//Assign taskID to class manually because we need to wait for the database to assign an ID, otherwise FK conflicts and auto-increment errors will snowball  
+				int id = getmaxID();
+				item.setId(id);
+
+				//Assign user to task and store in junction table with newly gotten task ID
+				PreparedStatement stmt2 = con.prepareStatement("INSERT INTO erl67is1017.user_todo (fk_todo_id, fk_user_id) VALUES (?,?)");
+				stmt2.setInt(1, id); 
+				stmt2.setInt(2, user.getId());
+				stmt2.executeUpdate();
+
+				System.out.println(stmt.toString().substring(47) + "   " + stmt2.toString().substring(47));	//substringed to hide extra JDBC data
+				stmt.close(); stmt2.close();
+
+				taskMap.put(item, user);
+
+				//View.getListModel().addElement(new ListItem(item.getDescription() + "       [" + taskMap.get(item).lastDotF() + "] ",item.getId(), item.getTimestamp()));
+				View.getJtfInput().setText("");
+				View.getListModel().addElement(item);
+				System.out.println("Item Added");
+			}
+			catch (MySQLIntegrityConstraintViolationException f) {
+				System.out.println("Duplicate item, unable to add"); //f.printStackTrace();
+				JOptionPane.showMessageDialog(View.getCboUser(),
+						"This task is already in the list",
+						"Try Again",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			catch (SQLException e) {
+				System.out.println("SQL error"); e.printStackTrace();
+			}
 		}
 	}
 
